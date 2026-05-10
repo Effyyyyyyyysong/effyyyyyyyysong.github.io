@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Effy Song — Strategy & Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F4EF;
+  --bg2:#EEEAE2;
+  --white:#FFFDF9;
+  --black:#1A1612;
+  --dark:#2C2820;
+  --gold:#C8860A;
+  --gold-light:#FEF3C7;
+  --gold-mid:#F0A500;
+  --muted:#7A7060;
+  --border:#DDD8CE;
+  --card:#FFFDF9;
+  --radius:16px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--dark);font-family:'Plus Jakarta Sans',sans-serif;line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(247,244,239,0.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;color:var(--black);text-decoration:none}
+.nav-name span{color:var(--gold)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:0.78rem;color:var(--muted);text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--gold)}
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:55% 45%;padding:110px 2.5rem 60px;align-items:center;max-width:1200px;margin:0 auto;gap:2rem}
+.hero-left{}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--gold-mid);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:0.5}}
+h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(3rem,5.5vw,4.8rem);line-height:1;letter-spacing:-0.03em;color:var(--black);margin-bottom:1rem}
+h1 strong{color:var(--gold);font-weight:900}
+.hero-tagline{font-size:1rem;color:var(--muted);max-width:480px;font-weight:300;margin-bottom:0.75rem;line-height:1.8}
+.hero-tagline strong{color:var(--dark);font-weight:500}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;margin:2rem 0 2.5rem}
+.btn-primary{background:var(--black);color:var(--white);padding:13px 30px;border-radius:100px;text-decoration:none;font-size:0.85rem;font-weight:500;transition:background 0.2s,transform 0.15s;display:inline-block}
+.btn-primary:hover{background:var(--gold);transform:translateY(-2px)}
+.btn-ghost{border:1.5px solid var(--border);color:var(--dark);padding:13px 30px;border-radius:100px;text-decoration:none;font-size:0.85rem;font-weight:400;transition:border-color 0.2s,transform 0.15s;display:inline-block}
+.btn-ghost:hover{border-color:var(--gold);transform:translateY(-2px)}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.stat-box{background:var(--white);padding:1rem;text-align:center}
+.stat-num{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;color:var(--gold);line-height:1;display:block}
+.stat-label{font-size:0.65rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-top:4px;display:block}
+
+/* PHOTO CARD */
+.hero-right{display:flex;justify-content:center}
+.photo-wrap{position:relative;width:340px}
+.open-badge{position:absolute;top:-14px;right:10px;z-index:10;background:var(--white);border:1.5px solid var(--border);border-radius:100px;padding:7px 16px;font-size:0.75rem;font-weight:600;color:var(--dark);box-shadow:0 4px 20px rgba(0,0,0,0.1);display:flex;align-items:center;gap:6px}
+.open-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0}
+.photo-frame{border-radius:20px;overflow:hidden;border:3px solid var(--gold-mid);box-shadow:6px 6px 0 var(--gold-light),12px 12px 0 var(--border)}
+.photo-frame img{width:100%;height:440px;object-fit:cover;object-position:top center;display:block}
+.photo-tag{position:absolute;background:var(--white);border:1.5px solid var(--border);border-radius:100px;padding:5px 13px;font-size:0.7rem;font-weight:500;color:var(--dark);box-shadow:0 3px 10px rgba(0,0,0,0.08);white-space:nowrap}
+.photo-tag.gold{background:var(--gold-mid);color:var(--white);border-color:var(--gold-mid);font-weight:600}
+.pt1{top:20px;left:-36px}
+.pt2{top:65px;right:-44px}
+.pt3{top:44%;left:-44px;transform:translateY(-50%)}
+.pt4{top:48%;right:-52px;transform:translateY(-50%)}
+.pt5{bottom:85px;left:-28px}
+.pt6{bottom:45px;right:-28px}
+
+/* SECTION BASE */
+section{padding:90px 2.5rem;border-top:1px solid var(--border)}
+.container{max-width:1100px;margin:0 auto}
+.eyebrow{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'→'}
+h2{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(1.8rem,3.5vw,2.8rem);letter-spacing:-0.02em;color:var(--black);margin-bottom:0.5rem;line-height:1.1}
+.section-sub{font-size:0.97rem;color:var(--muted);font-weight:300;max-width:580px;margin-bottom:3rem;line-height:1.8}
+
+/* FIND BUILD SCALE */
+#story{background:var(--white)}
+.fbs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.fbs-col{border-right:1px solid var(--border)}
+.fbs-col:last-child{border-right:none}
+.fbs-header{padding:1.75rem 1.75rem 1.25rem;background:var(--bg2);border-bottom:1px solid var(--border)}
+.fbs-step{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.fbs-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:900;color:var(--black);line-height:1}
+.fbs-title em{font-style:italic;color:var(--gold)}
+.fbs-q{font-size:0.78rem;color:var(--muted);margin-top:6px;font-style:italic}
+.fbs-cards{padding:1rem;display:flex;flex-direction:column;gap:8px;background:var(--white)}
+.fbs-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.fbs-card-title{font-size:0.85rem;font-weight:600;color:var(--dark);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.fbs-card-icon{font-size:1rem}
+.fbs-card-desc{font-size:0.78rem;color:var(--muted);font-weight:300;line-height:1.6}
+
+/* SKILLS */
+#skills{background:var(--bg)}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.skills-col h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--black);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
+.skills-col h3 span{font-size:1.2rem}
+.skill-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.skill-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.85rem 1rem;display:flex;align-items:flex-start;gap:10px}
+.skill-chip-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.skill-chip-text{}
+.skill-chip-name{font-size:0.82rem;font-weight:500;color:var(--dark);display:block;margin-bottom:2px}
+.skill-chip-desc{font-size:0.7rem;color:var(--muted);font-weight:300;line-height:1.4}
+
+/* EXPERIENCE */
+#experience{background:var(--white)}
+.exp-timeline{display:flex;flex-direction:column;gap:2rem}
+.exp-block{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+.exp-block-top{display:grid;grid-template-columns:1fr auto;align-items:start;padding:2rem 2rem 0;gap:1rem}
+.exp-meta{}
+.exp-co-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.exp-dot{width:9px;height:9px;border-radius:50%;background:var(--gold-mid);flex-shrink:0}
+.exp-co{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase}
+.exp-title{font-family:'Fraunces',serif;font-weight:700;font-size:1.2rem;color:var(--black);line-height:1.2;margin-bottom:4px}
+.exp-date{font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace}
+.exp-photos{display:flex;gap:8px}
+.exp-photo{width:80px;height:80px;border-radius:10px;object-fit:cover;border:1px solid var(--border)}
+.exp-block-body{padding:1.5rem 2rem 2rem}
+.exp-lead{font-size:0.92rem;color:var(--muted);font-weight:300;margin-bottom:1.25rem;line-height:1.75;border-left:2px solid var(--gold-mid);padding-left:1rem}
+.exp-bullets{list-style:none;display:flex;flex-direction:column;gap:7px}
+.exp-bullets li{font-size:0.84rem;color:var(--muted);font-weight:300;padding-left:1.25rem;position:relative;line-height:1.7}
+.exp-bullets li::before{content:'—';position:absolute;left:0;color:var(--gold-mid);font-weight:400}
+
+/* CHARTS */
+#impact{background:var(--bg)}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}
+.chart-title{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;color:var(--black);margin-bottom:3px}
+.chart-sub{font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.05em;margin-bottom:1.5rem}
+.chart-note{font-size:0.68rem;color:var(--muted);margin-top:1rem;font-style:italic;line-height:1.5}
+
+/* ABOUT */
+#about{background:var(--white)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
+.about-text p{font-size:0.97rem;color:var(--muted);font-weight:300;margin-bottom:1.1rem;line-height:1.85}
+.about-text strong{color:var(--dark);font-weight:500}
+.contact-stack{display:flex;flex-direction:column;gap:8px;margin-top:1.75rem}
+.contact-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--dark);font-size:0.85rem;transition:border-color 0.2s}
+.contact-row:hover{border-color:var(--gold)}
+.contact-ico{width:32px;height:32px;border-radius:8px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.contact-sub{font-size:0.65rem;color:var(--muted);font-family:'DM Mono',monospace;display:block}
+.about-cards{display:flex;flex-direction:column;gap:1rem}
+.info-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.info-card h4{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem}
+.open-list,.fun-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.open-list li,.fun-list li{font-size:0.88rem;color:var(--dark);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.open-list li::before{content:'✦';color:var(--gold);font-size:0.65rem;margin-top:4px;flex-shrink:0}
+
+/* CONTACT */
+#contact{background:var(--black);border-top:1px solid #2C2820}
+#contact .eyebrow{color:var(--gold-mid)}
+#contact h2{color:var(--white)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:2.5rem}
+.contact-left p{font-size:1rem;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.8;margin-bottom:2rem}
+.contact-links{display:flex;flex-direction:column;gap:10px}
+.contact-link{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.75);text-decoration:none;font-size:0.88rem;transition:all 0.2s}
+.contact-link:hover{border-color:var(--gold-mid);color:var(--white);background:rgba(240,165,0,0.07)}
+.contact-right{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:2rem}
+.contact-right h4{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold-mid);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.25rem}
+.open-to{list-style:none;display:flex;flex-direction:column;gap:10px}
+.open-to li{display:flex;align-items:center;gap:10px;font-size:0.9rem;color:rgba(255,255,255,0.65)}
+.open-to li::before{content:'✦';color:var(--gold-mid);font-size:0.65rem;flex-shrink:0}
+
+footer{text-align:center;padding:1.75rem;background:var(--black);font-family:'DM Mono',monospace;font-size:0.68rem;color:rgba(255,255,255,0.12);letter-spacing:0.06em;border-top:1px solid #2C2820}
+
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity 0.65s ease,transform 0.65s ease}
+.fade-up.visible{opacity:1;transform:none}
+
+@media(max-width:860px){
+  #hero{grid-template-columns:1fr;padding:100px 1.5rem 60px}
+  .hero-right{display:none}
+  .fbs-grid,.skills-grid,.charts-grid,.about-grid,.contact-grid{grid-template-columns:1fr}
+  .fbs-col{border-right:none;border-bottom:1px solid var(--border)}
+  .fbs-col:last-child{border-bottom:none}
+  .nav-links{display:none}
+  .exp-block-top{grid-template-columns:1fr}
+  .exp-photos{display:none}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-name" href="#hero">Effy<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#story">How I work</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero" style="border-top:none;padding-top:110px">
+  <div class="hero-left fade-up">
+    <div class="hero-eyebrow">Open to S&amp;O · GTM · Growth — London</div>
+    <h1><strong>Find</strong> the signal.<br><em style="font-style:italic;color:var(--gold)">Build</em> the system.<br><strong>Scale</strong> the market.</h1>
+    <p class="hero-tagline">I figure out <strong>which users are worth investing in</strong>, design the system to activate them, and scale it across markets — turning ambiguous growth problems into measurable, repeatable frameworks.</p>
+    <p class="hero-tagline" style="margin-top:-0.25rem">8+ years · TikTok EMEA · London</p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="https://www.linkedin.com/in/effy-song-a8778b1a5/" target="_blank">Let's talk →</a>
+      <a class="btn-ghost" href="#story">See how I work</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-box">
+        <span class="stat-num">8+</span>
+        <span class="stat-label">Yrs in S&amp;O</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">10</span>
+        <span class="stat-label">EMEA Markets</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">3×</span>
+        <span class="stat-label">Budget ROI</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">139%</span>
+        <span class="stat-label">GMV Growth</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right fade-up">
+    <div class="photo-wrap">
+      <div class="open-badge">● Open to work</div>
+      <div class="photo-frame">
+        <img src="photo_effy.png" alt="Effy Song"/>
+      </div>
+      <div class="photo-tag pt1">Strategy & Ops</div>
+      <div class="photo-tag gold pt2">TikTok EMEA</div>
+      <div class="photo-tag pt3">Monetisation Systems</div>
+      <div class="photo-tag pt4">10 Markets</div>
+      <div class="photo-tag pt5">AI & Data</div>
+      <div class="photo-tag gold pt6">London, UK</div>
+    </div>
+  </div>
+</section>
+
+<!-- FIND BUILD SCALE -->
+<section id="story">
+  <div class="container">
+    <div class="eyebrow">How I work</div>
+    <h2>Growth is a system,<br>not a guess.</h2>
+    <p class="section-sub">Every market I've worked in starts with the same question: where is the real opportunity? I answer it with data, then build the infrastructure to capture it at scale.</p>
+
+    <div class="fbs-grid fade-up">
+      <div class="fbs-col">
+        <div class="fbs-header">
+          <div class="fbs-step">Step 01</div>
+          <div class="fbs-title"><strong>Find</strong> the signal</div>
+          <div class="fbs-q">Who is worth investing in — and why?</div>
+        </div>
+        <div class="fbs-cards">
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">👥</span> Population segmentation</div>
+            <div class="fbs-card-desc">White-box cohort design using GMV output, behavioural signals, posting frequency, and unit economics. Every segment has an explicit business rationale.</div>
+          </div>
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">📡</span> Behavioural signal analysis</div>
+            <div class="fbs-card-desc">Page-visit frequency, engagement patterns, and action triggers to identify incentive-sensitive vs incentive-resistant users before spending.</div>
+          </div>
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">🔍</span> Market insight & competitive analysis</div>
+            <div class="fbs-card-desc">Systematic monitoring of competitor activities and market whitespace to surface growth opportunities and inform strategic prioritisation.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fbs-col">
+        <div class="fbs-header">
+          <div class="fbs-step">Step 02</div>
+          <div class="fbs-title"><em>Build</em> the system</div>
+          <div class="fbs-q">How do you design it — before spending a penny?</div>
+        </div>
+        <div class="fbs-cards">
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">🏗️</span> Incentive architecture</div>
+            <div class="fbs-card-desc">Percentile-based numerical strategy, completion rate prediction, bonus tier design. Pre-analysis revenue modelling across variants before any budget is committed.</div>
+          </div>
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">🧪</span> Experimentation framework</div>
+            <div class="fbs-card-desc">A/B testing with holdout groups across incentive amount, type, and time window. Measures true incremental uplift — not just correlation.</div>
+          </div>
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">💰</span> Monetisation design</div>
+            <div class="fbs-card-desc">End-to-end variable system design across e-commerce (commission, flat fee) and live commerce (gifting, subscription, community). Conversion pathways from engagement → spend.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fbs-col">
+        <div class="fbs-header">
+          <div class="fbs-step">Step 03</div>
+          <div class="fbs-title"><strong>Scale</strong> the market</div>
+          <div class="fbs-q">How do you make it repeatable across markets?</div>
+        </div>
+        <div class="fbs-cards">
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">🌍</span> Multi-market GTM rollout</div>
+            <div class="fbs-card-desc">Coordinated execution across 10 EMEA markets — aligning Product, Data, Ops, and local market leads on priorities, sequencing, and OKRs.</div>
+          </div>
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">📊</span> OKR & planning cycles</div>
+            <div class="fbs-card-desc">Annual and quarterly planning cadence, QBR design, budget tracking, and executive reporting. Translating strategy into operational plans that teams actually execute.</div>
+          </div>
+          <div class="fbs-card">
+            <div class="fbs-card-title"><span class="fbs-card-icon">🔄</span> ROI iteration</div>
+            <div class="fbs-card-desc">Three-dimensional optimisation: actionability → incremental GMV → cost-per-incremental-unit. Post-analysis feeds directly into the next planning cycle.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="eyebrow">Skills</div>
+    <h2>Hard skills. Soft skills.<br>Both matter.</h2>
+    <p class="section-sub">Built across consulting, consumer tech, and global commerce — matched against what Spotify, Deliveroo, Anthropic, and DoorDash actually hire for.</p>
+
+    <div class="skills-grid fade-up">
+      <div class="skills-col">
+        <h3><span>⚙️</span> Hard skills</h3>
+        <div class="skill-items">
+          <div class="skill-chip">
+            <span class="skill-chip-icon">📐</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Strategy & Ops</span>
+              <span class="skill-chip-desc">GTM, OKR, QBR, planning cycles, market entry</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">💡</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Incentive Design</span>
+              <span class="skill-chip-desc">Resource allocation, budget ROI, tier architecture</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🧪</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Experimentation</span>
+              <span class="skill-chip-desc">A/B testing, holdout, causal uplift measurement</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">📈</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Growth & Monetisation</span>
+              <span class="skill-chip-desc">LTV, ARPU, conversion, retention, P&L ownership</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🗄️</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">SQL & Analytics</span>
+              <span class="skill-chip-desc">Complex joins, window functions, segmentation models</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🤖</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">AI-assisted Execution</span>
+              <span class="skill-chip-desc">Behavioural modelling, AI analytics, decision frameworks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="skills-col">
+        <h3><span>🧠</span> Soft skills</h3>
+        <div class="skill-items">
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🎯</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Structured thinking</span>
+              <span class="skill-chip-desc">Turn ambiguous problems into clear plans and priorities</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🤝</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Stakeholder influence</span>
+              <span class="skill-chip-desc">C-level advisory, cross-functional alignment, no direct authority</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🌀</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Ambiguity tolerance</span>
+              <span class="skill-chip-desc">0-to-1 environments, no playbook, bias for action</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🗣️</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Executive communication</span>
+              <span class="skill-chip-desc">Complex data → sharp narrative for boards and leadership</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🌐</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Multi-market coordination</span>
+              <span class="skill-chip-desc">10+ EMEA markets, diverse teams, consistent execution</span>
+            </div>
+          </div>
+          <div class="skill-chip">
+            <span class="skill-chip-icon">🔁</span>
+            <div class="skill-chip-text">
+              <span class="skill-chip-name">Iteration mindset</span>
+              <span class="skill-chip-desc">Build → test → learn → repeat. Systems that self-improve.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="eyebrow">Experience</div>
+    <h2>Where I've built.</h2>
+    <p class="section-sub">8+ years across live commerce, e-commerce, global B2B, and consumer tech — always at the intersection of strategy, data, and execution.</p>
+
+    <div class="exp-timeline">
+
+      <!-- TikTok LIVE -->
+      <div class="exp-block fade-up">
+        <div class="exp-block-top">
+          <div class="exp-meta">
+            <div class="exp-co-row">
+              <div class="exp-dot"></div>
+              <span class="exp-co">TikTok · London, UK</span>
+            </div>
+            <div class="exp-title">Senior Creator Strategy & Operation Manager</div>
+            <div class="exp-date">Jan 2026 — Present · Live Commerce</div>
+          </div>
+          <div class="exp-photos">
+            <img class="exp-photo" src="photo_tiktok_live_1.png" alt="TikTok LIVE event"/>
+            <img class="exp-photo" src="photo_tiktok_live_2.png" alt="TikTok panel"/>
+            <img class="exp-photo" src="photo_tiktok_live_3.png" alt="TikTok conference"/>
+          </div>
+        </div>
+        <div class="exp-block-body">
+          <p class="exp-lead">Lead live monetisation strategy for 10,000 top-tier creators across 10 EMEA markets — designing commercial systems that convert creator engagement into scalable, predictable platform revenue.</p>
+          <ul class="exp-bullets">
+            <li>Designed and scaled multiple live monetisation products — Personalised Mission, Match Matching Hub, Live Moment — achieving 139% GMV growth and significantly higher user retention vs standard programmes</li>
+            <li>Built strategic architecture from scratch: user segmentation, monetisation mechanics, conversion pathways from engagement → spend, and repeatable multi-market rollout frameworks</li>
+            <li>Strategic lead across Product, Data, Ops, and 10 Market Leads — aligning OKRs and coordinating execution at scale</li>
+            <li>Applied AI-assisted analytics and behavioural signal modelling to improve retention, ARPU, and monetisation efficiency</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- TikTok Shop -->
+      <div class="exp-block fade-up">
+        <div class="exp-block-top">
+          <div class="exp-meta">
+            <div class="exp-co-row">
+              <div class="exp-dot"></div>
+              <span class="exp-co">TikTok · London, UK</span>
+            </div>
+            <div class="exp-title">Senior Creator & Affiliate Manager</div>
+            <div class="exp-date">Jun 2021 — Dec 2025 · E-commerce</div>
+          </div>
+          <div class="exp-photos">
+            <img class="exp-photo" src="photo_tiktok_shop_1.png" alt="TikTok Shop"/>
+            <img class="exp-photo" src="photo_tiktok_shop_2.png" alt="TikTok Shop event"/>
+            <img class="exp-photo" src="photo_tiktok_shop_3.png" alt="TikTok office"/>
+          </div>
+        </div>
+        <div class="exp-block-body">
+          <p class="exp-lead">Owned end-to-end growth, incentive strategy, and P&L for one of TikTok's largest creator and affiliate portfolios — 7-figure annual budget at 3× ROI, contributing to a 9-figure GMV outcome.</p>
+          <ul class="exp-bullets">
+            <li>Built a white-box incentive system from scratch: audience segmentation by behavioural signals, percentile-based numerical strategy, completion rate prediction, and incremental uplift validation via A/B holdout testing</li>
+            <li>Designed three-dimensional ROI optimisation framework — actionability, incremental GMV, cost-per-incremental-unit — enabling data-driven budget reallocation across 1.6M+ creators</li>
+            <li>Led CRM and lifecycle strategy across in-app, push, and email — segmentation frameworks and experimentation pipelines driving activation, retention, and monetisation</li>
+            <li>Partnered with Product & Engineering to launch 3 mega and 12 monthly campaigns — doubling active supply and growing output 2.8×</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Suzao -->
+      <div class="exp-block fade-up">
+        <div class="exp-block-top">
+          <div class="exp-meta">
+            <div class="exp-co-row">
+              <div class="exp-dot" style="background:var(--muted)"></div>
+              <span class="exp-co">Suzao Footwear · China / Global</span>
+            </div>
+            <div class="exp-title">Global Business & Growth Manager</div>
+            <div class="exp-date">Mar 2020 — Mar 2021 · B2B Commerce</div>
+          </div>
+          <div class="exp-photos">
+            <img class="exp-photo" src="photo_suzao_1.png" alt="Suzao fashion show"/>
+            <img class="exp-photo" src="photo_suzao_2.png" alt="Suzao runway"/>
+            <img class="exp-photo" src="photo_suzao_3.png" alt="Suzao brand"/>
+          </div>
+        </div>
+        <div class="exp-block-body">
+          <p class="exp-lead">Built B2B commercial strategy across 10+ global markets — driving $5M+ revenue (+150% YoY) through structured account expansion, demand forecasting, and end-to-end commercial operations.</p>
+          <ul class="exp-bullets">
+            <li>Acquired 15+ Tier 1 clients annually ($30K+ each) through structured account expansion, cross-sell, and upsell</li>
+            <li>Led demand forecasting and account planning — reduced lead time 33%, cut costs 8%, grew client retention +25%</li>
+            <li>Owned end-to-end commercial operations: product, pricing, logistics — supporting scalable growth across markets</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tesla -->
+      <div class="exp-block fade-up">
+        <div class="exp-block-top">
+          <div class="exp-meta">
+            <div class="exp-co-row">
+              <div class="exp-dot" style="background:#cc0000"></div>
+              <span class="exp-co">Tesla · Sydney, Australia</span>
+            </div>
+            <div class="exp-title">Customer Experience Specialist</div>
+            <div class="exp-date">Jan 2019 — Jun 2019</div>
+          </div>
+        </div>
+        <div class="exp-block-body">
+          <p class="exp-lead">Improved customer satisfaction +25% through optimised service workflows and targeted campaigns.</p>
+          <ul class="exp-bullets">
+            <li>Increased test drive sign-up +20% and completion rate +30% via targeted campaigns</li>
+            <li>Collaborated with Sales, Product, and Marketing to improve funnel performance and customer journey</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT CHARTS -->
+<section id="impact">
+  <div class="container">
+    <div class="eyebrow">Impact in numbers</div>
+    <h2>Growth I was part of building.</h2>
+    <div class="charts-grid">
+      <div class="chart-card fade-up">
+        <div class="chart-title">TikTok Shop UK — GMV Growth</div>
+        <div class="chart-sub">2021–2025 · Creator & Affiliate market · Public data</div>
+        <div style="position:relative;height:240px">
+          <canvas id="gmvChart" role="img" aria-label="TikTok Shop UK GMV growth 2021 to 2025">GMV grew from ~£0.08B in 2021 to ~£2.8B estimated in 2025.</canvas>
+        </div>
+        <div class="chart-note">Sources: Onramp Funds ($1.5B UK GMV 2024), industry reports. 2025 estimated. TikTok Shop UK launched beta 2021, scaled from 2022.</div>
+      </div>
+      <div class="chart-card fade-up">
+        <div class="chart-title">Incentive System — Outcomes</div>
+        <div class="chart-sub">TikTok UK E-commerce · Creator & Affiliate portfolio</div>
+        <div style="position:relative;height:240px">
+          <canvas id="impactChart" role="img" aria-label="Key outcomes: GMV growth 180%, ROI 3x, output growth 2.8x">GMV +180% YoY, 3× ROI, 2.8× output growth.</canvas>
+        </div>
+        <div class="chart-note">Internal programme results from the creator incentive framework, Jun 2021 – Dec 2025.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="eyebrow">About me</div>
+    <h2>Beyond the resume.</h2>
+    <div class="about-grid">
+      <div class="fade-up">
+        <p>My edge is <strong>finding where the growth opportunity hides</strong> — in data, behavioural signals, and competitive whitespace — then building the operational infrastructure to capture it at scale.</p>
+        <p>Across two distinct monetisation models at TikTok EMEA — <strong>e-commerce</strong> (commission + flat fee) and <strong>live commerce</strong> (gifting, subscription, community) — I've built incentive and growth systems where no playbook previously existed.</p>
+        <p>I thrive in <strong>0-to-1 environments</strong>: defining annual planning cycles, designing OKR frameworks, leading multi-market rollouts, and advising senior leadership on strategic priorities.</p>
+        <div class="contact-stack">
+          <a class="contact-row" href="mailto:effysong0723@gmail.com">
+            <div class="contact-ico">✉</div>
+            <div><span class="contact-sub">Email</span>effysong0723@gmail.com</div>
+          </a>
+          <a class="contact-row" href="https://linkedin.com/in/effy-song-a8778b1a5" target="_blank">
+            <div class="contact-ico">in</div>
+            <div><span class="contact-sub">LinkedIn</span>effy-song-a8778b1a5</div>
+          </a>
+        </div>
+      </div>
+      <div class="about-cards fade-up">
+        <div class="info-card">
+          <h4>→ Open to</h4>
+          <ul class="open-list">
+            <li>Strategy & Operations Manager / Senior Manager</li>
+            <li>GTM Strategy & Operations</li>
+            <li>Growth & Monetisation Lead</li>
+            <li>AI, consumer tech, or high-growth marketplaces</li>
+            <li>London-based or hybrid</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h4>↳ Fun facts</h4>
+          <ul class="fun-list">
+            <li>🌍 Worked across 3 countries — China, Australia, UK</li>
+            <li>✈️ Travelled to 30+ countries</li>
+            <li>🕯️ Built a candle brand from scratch — full PM experience</li>
+            <li>🤖 Deep user of AI & data: SQL, Tableau, AI-assisted analytics daily</li>
+            <li>🗣️ English · Mandarin · Cantonese · Spanish (beginner)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="eyebrow">Get in touch</div>
+    <h2>Let's build something<br>that scales.</h2>
+    <div class="contact-grid">
+      <div class="contact-left">
+        <p>Open to Strategy & Operations, GTM, and Growth leadership roles in AI, consumer tech, or high-growth marketplaces — London.</p>
+        <div class="contact-links">
+          <a class="contact-link" href="mailto:effysong0723@gmail.com">✉ effysong0723@gmail.com</a>
+          <a class="contact-link" href="https://linkedin.com/in/effy-song-a8778b1a5" target="_blank">↗ LinkedIn — effy-song</a>
+          <a class="contact-link" href="EffySong_Strategy___Operation_Manager.pdf" target="_blank">↓ Download CV</a>
+        </div>
+      </div>
+      <div class="contact-right">
+        <h4>✦ Open to</h4>
+        <ul class="open-to">
+          <li>Strategy & Operations — Spotify, Deliveroo, Cleo</li>
+          <li>GTM Strategy — DoorDash, Whatnot, Moloco</li>
+          <li>Growth & Monetisation — Oura, consumer tech</li>
+          <li>AI-first companies building at scale</li>
+          <li>Senior Manager / Principal level</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Effy Song · London, UK</footer>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if(e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i*100);
+  });
+}, {threshold:0.08});
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// GMV chart
+new Chart(document.getElementById('gmvChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2021','2022','2023','2024','2025*'],
+    datasets:[{
+      data:[0.08,0.22,0.6,1.5,2.8],
+      backgroundColor:['#FEF3C7','#FDE68A','#FCD34D','#F0A500','#C8860A'],
+      borderRadius:6,borderSkipped:false
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`£${c.raw}B est.`}}},
+    scales:{
+      x:{grid:{display:false},ticks:{color:'#7A7060',font:{size:11}}},
+      y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#7A7060',font:{size:11},callback:v=>`£${v}B`},beginAtZero:true}
+    }
+  }
+});
+
+// Impact chart
+new Chart(document.getElementById('impactChart'), {
+  type: 'bar',
+  data: {
+    labels: ['GMV Growth\n(YoY)','Budget\nROI','Output\nGrowth'],
+    datasets:[{
+      data:[180,300,180],
+      backgroundColor:['#F0A500','#C8860A','#FCD34D'],
+      borderRadius:6,borderSkipped:false
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:c=>{const l=['+180% YoY','3× ROI','2.8× output'];return l[c.dataIndex];}}}
+    },
+    scales:{
+      x:{grid:{display:false},ticks:{color:'#7A7060',font:{size:11},maxRotation:0}},
+      y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{color:'#7A7060',font:{size:11},callback:v=>v+'%'},beginAtZero:true}
+    }
+  }
+});
+</script>
+</body>
+</html>
